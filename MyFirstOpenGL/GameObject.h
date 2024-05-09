@@ -1,5 +1,6 @@
 #pragma once
 #include <glm.hpp>
+#include <vector>
 
 class GameObject
 {
@@ -9,12 +10,9 @@ public:
 	glm::vec3 rotation;
 	glm::vec3 scale;
 
-	GameObject(glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale)
-		: position(_position), rotation(_rotation), scale(_scale) 
+	std::vector<float> color; 
+
+	GameObject(glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color = {0.f, 0.f, 0.f, 0.f,})
+		: position(_position), rotation(_rotation), scale(_scale), color(_color)
 	{}; 
-
-	void ChangeColor(glm::vec4 _ambientColor = glm::vec4(0.f, 0.f, 0.f, 1.f))
-	{
-
-	}
 };

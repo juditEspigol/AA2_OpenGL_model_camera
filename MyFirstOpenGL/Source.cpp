@@ -10,28 +10,16 @@
 #include <sstream>
 #include <stb_image.h>
 
+#include "MatrixUtilities.h"
+#include "ShaderProgram.h"
+#include "ProgramManager.h"
+#include "GLManager.h"
+
 #include "GameObject.h"
 #include "Camera.h"
 #include "Model.h"
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-
-std::vector<GLuint> compiledPrograms;
 std::vector<Model> models;
-
-struct ShaderProgram {
-	GLuint vertexShader = 0;
-	GLuint geometryShader = 0;
-	GLuint fragmentShader = 0;
-};
-
-void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHeight) {
-
-	//Definir nuevo tamaño del viewport
-	glViewport(0, 0, iFrameBufferWidth, iFrameBufferHeight);
-	glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), iFrameBufferWidth, iFrameBufferHeight);
-}
 
 //Funcion que leera un .obj y devolvera un modelo para poder ser renderizado
 Model LoadOBJModel(const std::string& filePath) {
@@ -146,168 +134,6 @@ Model LoadOBJModel(const std::string& filePath) {
 	return Model(vertexs, textureCoordinates, vertexNormal);
 }
 
-//Funcion que genera una matriz de escalado representada por un vector
-glm::mat4 GenerateScaleMatrix(glm::vec3 scaleAxis) {
-
-	return glm::scale(glm::mat4(1.0f), scaleAxis);
-}
-//Funcion que genera una matriz de rotacion dado un angulo y un vector
-glm::mat4 GenerateRotationMatrix(glm::vec3 axis, float fDegrees) {
-
-	return glm::rotate(glm::mat4(1.0f), glm::radians(fDegrees), glm::normalize(axis));
-}
-//Funcion que genera una matriz de traslacion representada por un vector
-glm::mat4 GenerateTranslationMatrix(glm::vec3 translation) {
-
-	return glm::translate(glm::mat4(1.0f), translation);
-}
-
-//Funcion que devolvera una string con todo el archivo leido
-std::string Load_File(const std::string& filePath) {
-
-	std::ifstream file(filePath);
-
-	std::string fileContent;
-	std::string line;
-
-	//Lanzamos error si el archivo no se ha podido abrir
-	if (!file.is_open()) {
-		std::cerr << "No se ha podido abrir el archivo: " << filePath << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-
-	//Leemos el contenido y lo volcamos a la variable auxiliar
-	while (std::getline(file, line)) {
-		fileContent += line + "\n";
-	}
-
-	//Cerramos stream de datos y devolvemos contenido
-	file.close();
-
-	return fileContent;
-}
-
-GLuint LoadFragmentShader(const std::string& filePath) {
-
-	// Crear un fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	//Usamos la funcion creada para leer el fragment shader y almacenarlo 
-	std::string sShaderCode = Load_File(filePath);
-	const char* cShaderSource = sShaderCode.c_str();
-
-	//Vinculamos el fragment shader con su código fuente
-	glShaderSource(fragmentShader, 1, &cShaderSource, nullptr);
-
-	// Compilar el fragment shader
-	glCompileShader(fragmentShader);
-
-	// Verificar errores de compilación
-	GLint success;
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	//Si la compilacion ha sido exitosa devolvemos el fragment shader
-	if (success) {
-
-		return fragmentShader;
-
-	}
-	else {
-
-		//Obtenemos longitud del log
-		GLint logLength;
-		glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
-
-		//Obtenemos el log
-		std::vector<GLchar> errorLog(logLength);
-		glGetShaderInfoLog(fragmentShader, logLength, nullptr, errorLog.data());
-
-		//Mostramos el log y finalizamos programa
-		std::cerr << "Se ha producido un error al cargar el fragment shader:  " << errorLog.data() << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-GLuint LoadGeometryShader(const std::string& filePath) {
-
-	// Crear un vertex shader
-	GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
-
-	//Usamos la funcion creada para leer el vertex shader y almacenarlo 
-	std::string sShaderCode = Load_File(filePath);
-	const char* cShaderSource = sShaderCode.c_str();
-
-	//Vinculamos el vertex shader con su código fuente
-	glShaderSource(geometryShader, 1, &cShaderSource, nullptr);
-
-	// Compilar el vertex shader
-	glCompileShader(geometryShader);
-
-	// Verificar errores de compilación
-	GLint success;
-	glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
-
-	//Si la compilacion ha sido exitosa devolvemos el vertex shader
-	if (success) {
-
-		return geometryShader;
-
-	}
-	else {
-
-		//Obtenemos longitud del log
-		GLint logLength;
-		glGetShaderiv(geometryShader, GL_INFO_LOG_LENGTH, &logLength);
-
-		//Obtenemos el log
-		std::vector<GLchar> errorLog(logLength);
-		glGetShaderInfoLog(geometryShader, logLength, nullptr, errorLog.data());
-
-		//Mostramos el log y finalizamos programa
-		std::cerr << "Se ha producido un error al cargar el vertex shader:  " << errorLog.data() << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-GLuint LoadVertexShader(const std::string& filePath) {
-
-	// Crear un vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-	//Usamos la funcion creada para leer el vertex shader y almacenarlo 
-	std::string sShaderCode = Load_File(filePath);
-	const char* cShaderSource = sShaderCode.c_str();
-
-	//Vinculamos el vertex shader con su código fuente
-	glShaderSource(vertexShader, 1, &cShaderSource, nullptr);
-
-	// Compilar el vertex shader
-	glCompileShader(vertexShader);
-
-	// Verificar errores de compilación
-	GLint success;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	//Si la compilacion ha sido exitosa devolvemos el vertex shader
-	if (success) {
-
-		return vertexShader;
-
-	}
-	else {
-
-		//Obtenemos longitud del log
-		GLint logLength;
-		glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &logLength);
-
-		//Obtenemos el log
-		std::vector<GLchar> errorLog(logLength);
-		glGetShaderInfoLog(vertexShader, logLength, nullptr, errorLog.data());
-
-		//Mostramos el log y finalizamos programa
-		std::cerr << "Se ha producido un error al cargar el vertex shader:  " << errorLog.data() << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-
 //Función que dado un struct que contiene los shaders de un programa generara el programa entero de la GPU
 GLuint CreateProgram(const ShaderProgram& shaders) {
 
@@ -374,61 +200,36 @@ void main() {
 	//Definir semillas del rand según el tiempo
 	srand(static_cast<unsigned int>(time(NULL)));
 
-	//Inicializamos GLFW para gestionar ventanas e inputs
-	glfwInit();
-
-	//Configuramos la ventana
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-
-	//Inicializamos la ventana
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Engine", NULL, NULL);
-
-	//Asignamos función de callback para cuando el frame buffer es modificado
-	glfwSetFramebufferSizeCallback(window, Resize_Window);
-
-	//Definimos espacio de trabajo
-	glfwMakeContextCurrent(window);
+	GL_MANAGER.WindowsConfiguration(); 
 
 	//Permitimos a GLEW usar funcionalidades experimentales
 	glewExperimental = GL_TRUE;
 
-	//Activamos cull face
-	glEnable(GL_CULL_FACE);
-
-	//Indicamos lado del culling
-	glCullFace(GL_BACK);
-
-	//Indicamos lado del culling
-	glEnable(GL_DEPTH_TEST);
+	GL_MANAGER.ActivateBackCulling(); 
 
 	//Leer textura
 	int width, height, nrChannels;
 	unsigned char* textureInfo = stbi_load("Assets/Textures/troll.png", &width, &height, &nrChannels, 0);
 
 	//Inicializamos GLEW y controlamos errores
-	if (glewInit() == GLEW_OK) {
+	if (glewInit() == GLEW_OK) 
+	{
+		//Definimos color para limpiar el buffer de color
+		glClearColor(0.f, 0.6f, 1.f, 1.f);
+		//Definimos modo de dibujo para cada cara
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		//Compilar shaders
+		ShaderProgram myFirstProgram = ShaderProgram("MyFirstVertexShader.glsl", "MyFirstGeometryShader.glsl", "MyFirstFragmentShader.glsl");
+		//Compìlar programa
+		PROGRAM_MANAGER.compiledPrograms.push_back(CreateProgram(myFirstProgram));
 
 		//Declarar instancia de GameObject
 		Camera camera = Camera(glm::vec3(0.f, 0.5f, 2.f), 45.0f, 0.1f, 10.f);
-		GameObject troll = GameObject(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.25f));
-
-		//Compilar shaders
-		ShaderProgram myFirstProgram;
-		myFirstProgram.vertexShader = LoadVertexShader("MyFirstVertexShader.glsl");
-		myFirstProgram.geometryShader = LoadGeometryShader("MyFirstGeometryShader.glsl");
-		myFirstProgram.fragmentShader = LoadFragmentShader("MyFirstFragmentShader.glsl");
-
-		//Compìlar programa
-		compiledPrograms.push_back(CreateProgram(myFirstProgram));
+		GameObject troll = GameObject(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.25f), { 0.5f, 1.f, 0.5f, 1.f });
 
 		//Cargo Modelo
 		models.push_back(LoadOBJModel("Assets/Models/troll.obj"));
-
-		//Definimos color para limpiar el buffer de color
-		glClearColor(0.f, 0.6f, 1.f, 1.f);
 
 		//Definimos canal de textura activo
 		glActiveTexture(GL_TEXTURE0);
@@ -455,47 +256,43 @@ void main() {
 		//Liberar memoria de la imagen cargada
 		stbi_image_free(textureInfo);
 
-		//Definimos modo de dibujo para cada cara
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 		//Indicar a la tarjeta GPU que programa debe usar
-		glUseProgram(compiledPrograms[0]);
+		glUseProgram(PROGRAM_MANAGER.compiledPrograms[0]);
 
 		//Definir la matriz de traslacion, rotacion y escalado
-		glm::mat4 translationMatrix = GenerateTranslationMatrix(troll.position); 
-		glm::mat4 rotationMatrix = GenerateRotationMatrix(troll.rotation, troll.rotation.y);
-		glm::mat4 scaleMatrix = GenerateScaleMatrix(troll.scale);
+		glm::mat4 translationMatrix = MatrixUtilities::GenerateTranslationMatrix(troll.position); 
+		glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(troll.rotation, troll.rotation.y);
+		glm::mat4 scaleMatrix = MatrixUtilities::GenerateScaleMatrix(troll.scale);
 
 		//Asignar valores iniciales al programa
-		glUniform2f(glGetUniformLocation(compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+		glUniform2f(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		//Asignar valor variable de textura a usar.
-		glUniform1i(glGetUniformLocation(compiledPrograms[0], "textureSampler"), 0);
+		glUniform1i(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "textureSampler"), 0);
 
 		// Pasar las matrices
-		glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(rotationMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(rotationMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMatrix));
 
 		// Pasar el color en que queremos pintar el game object
-		std::vector<float> ambientColor = { 0.5f, 1.f, 0.5f, 1.f };
-		glUniform4f(glGetUniformLocation(compiledPrograms[0], "ambientColor"), ambientColor[0], ambientColor[1], ambientColor[2], ambientColor[3]);
+		glUniform4f(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "ambientColor"), troll.color[0], troll.color[1], troll.color[2], troll.color[3]);
 
 		//Generamos el game loop
-		while (!glfwWindowShouldClose(window)) {
+		while (!glfwWindowShouldClose(GL_MANAGER.window)) {
 
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
 
-			camera.Inputs(window); 
+			camera.Inputs(GL_MANAGER.window); 
 
 			//Genero la matriz vista
 			glm::mat4 view = glm::lookAt(camera.position, camera.position + glm::vec3(0.f, 0.f, -1.f), camera.localVectorUp);
 			// Definir la matriz proyeccion
 			glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, camera.near, camera.far);
 
-			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "view"), 1, GL_FALSE, glm::value_ptr(view));
-			glUniformMatrix4fv(glGetUniformLocation(compiledPrograms[0], "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+			glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "view"), 1, GL_FALSE, glm::value_ptr(view));
+			glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 			//Limpiamos los buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -505,12 +302,12 @@ void main() {
 
 			//Cambiamos buffers
 			glFlush();
-			glfwSwapBuffers(window);
+			glfwSwapBuffers(GL_MANAGER.window);
 		}
 
 		//Desactivar y eliminar programa
 		glUseProgram(0);
-		glDeleteProgram(compiledPrograms[0]);
+		PROGRAM_MANAGER.DeleteAllPrograms(); 
 
 	}
 	else {

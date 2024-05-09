@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GLManager.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Stb.cpp" />
   </ItemGroup>
@@ -31,7 +33,11 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GLManager.h" />
+    <ClInclude Include="MatrixUtilities.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ProgramManager.h" />
+    <ClInclude Include="ShaderProgram.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
