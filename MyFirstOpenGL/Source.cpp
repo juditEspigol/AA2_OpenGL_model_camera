@@ -2,11 +2,6 @@
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 #include <gtc/type_ptr.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
 #include <sstream>
 #include <stb_image.h>
 
@@ -134,67 +129,6 @@ Model LoadOBJModel(const std::string& filePath) {
 	return Model(vertexs, textureCoordinates, vertexNormal);
 }
 
-//Función que dado un struct que contiene los shaders de un programa generara el programa entero de la GPU
-GLuint CreateProgram(const ShaderProgram& shaders) {
-
-	//Crear programa de la GPU
-	GLuint program = glCreateProgram();
-
-	//Verificar que existe un vertex shader y adjuntarlo al programa
-	if (shaders.vertexShader != 0) {
-		glAttachShader(program, shaders.vertexShader);
-	}
-
-	if (shaders.geometryShader != 0) {
-		glAttachShader(program, shaders.geometryShader);
-	}
-
-	if (shaders.fragmentShader != 0) {
-		glAttachShader(program, shaders.fragmentShader);
-	}
-
-	// Linkear el programa
-	glLinkProgram(program);
-
-	//Obtener estado del programa
-	GLint success;
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-
-	//Devolver programa si todo es correcto o mostrar log en caso de error
-	if (success) {
-
-		//Liberamos recursos
-		if (shaders.vertexShader != 0) {
-			glDetachShader(program, shaders.vertexShader);
-		}
-
-		//Liberamos recursos
-		if (shaders.geometryShader != 0) {
-			glDetachShader(program, shaders.geometryShader);
-		}
-
-		//Liberamos recursos
-		if (shaders.fragmentShader != 0) {
-			glDetachShader(program, shaders.fragmentShader);
-		}
-
-		return program;
-	}
-	else {
-
-		//Obtenemos longitud del log
-		GLint logLength;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-
-		//Almacenamos log
-		std::vector<GLchar> errorLog(logLength);
-		glGetProgramInfoLog(program, logLength, nullptr, errorLog.data());
-
-		std::cerr << "Error al linkar el programa:  " << errorLog.data() << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-
 void main() {
 
 	//Definir semillas del rand según el tiempo
@@ -218,15 +152,25 @@ void main() {
 		glClearColor(0.f, 0.6f, 1.f, 1.f);
 		//Definimos modo de dibujo para cada cara
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+		
 		//Compilar shaders
 		ShaderProgram myFirstProgram = ShaderProgram("MyFirstVertexShader.glsl", "MyFirstGeometryShader.glsl", "MyFirstFragmentShader.glsl");
+		ShaderProgram uwu = ShaderProgram("MyFirstVertexShader.glsl", "MyFirstGeometryShader.glsl", "MyFirstFragmentShader.glsl");
 		//Compìlar programa
 		PROGRAM_MANAGER.compiledPrograms.push_back(CreateProgram(myFirstProgram));
+		PROGRAM_MANAGER.compiledPrograms.push_back(CreateProgram(uwu));
 
 		//Declarar instancia de GameObject
-		Camera camera = Camera(glm::vec3(0.f, 0.5f, 2.f), 45.0f, 0.1f, 10.f);
-		GameObject troll = GameObject(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.25f), { 0.5f, 1.f, 0.5f, 1.f });
+		Camera camera = Camera(PROGRAM_MANAGER.compiledPrograms[0], glm::vec3(0.f, 0.5f, 2.f), 45.0f, 0.1f, 10.f);
+
+		GameObject troll = GameObject(PROGRAM_MANAGER.compiledPrograms[0], 
+			glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.5f), { 0.5f, 1.f, 0.5f, 1.f });
+
+		GameObject troll_2 = GameObject(PROGRAM_MANAGER.compiledPrograms[0],
+			glm::vec3(-0.5f, 0.f, 0.5f), glm::vec3(0.f, 45.f, 0.f), glm::vec3(0.25f), { 1.f, 0.5f, 0.5f, 1.f });
+
+		GameObject troll_3 = GameObject(PROGRAM_MANAGER.compiledPrograms[0],
+			glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 300.f, 0.f), glm::vec3(0.25f), { 0.5f, 0.5f, 1.f, 1.f });
 
 		//Cargo Modelo
 		models.push_back(LoadOBJModel("Assets/Models/troll.obj"));
@@ -255,49 +199,27 @@ void main() {
 
 		//Liberar memoria de la imagen cargada
 		stbi_image_free(textureInfo);
-
-		//Indicar a la tarjeta GPU que programa debe usar
-		glUseProgram(PROGRAM_MANAGER.compiledPrograms[0]);
-
-		//Definir la matriz de traslacion, rotacion y escalado
-		glm::mat4 translationMatrix = MatrixUtilities::GenerateTranslationMatrix(troll.position); 
-		glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(troll.rotation, troll.rotation.y);
-		glm::mat4 scaleMatrix = MatrixUtilities::GenerateScaleMatrix(troll.scale);
-
-		//Asignar valores iniciales al programa
-		glUniform2f(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
-
-		//Asignar valor variable de textura a usar.
-		glUniform1i(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "textureSampler"), 0);
-
-		// Pasar las matrices
-		glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(rotationMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMatrix));
-
-		// Pasar el color en que queremos pintar el game object
-		glUniform4f(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "ambientColor"), troll.color[0], troll.color[1], troll.color[2], troll.color[3]);
-
+		
 		//Generamos el game loop
 		while (!glfwWindowShouldClose(GL_MANAGER.window)) {
 
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
-
-			camera.Inputs(GL_MANAGER.window); 
-
-			//Genero la matriz vista
-			glm::mat4 view = glm::lookAt(camera.position, camera.position + glm::vec3(0.f, 0.f, -1.f), camera.localVectorUp);
-			// Definir la matriz proyeccion
-			glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, camera.near, camera.far);
-
-			glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "view"), 1, GL_FALSE, glm::value_ptr(view));
-			glUniformMatrix4fv(glGetUniformLocation(PROGRAM_MANAGER.compiledPrograms[0], "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
 			//Limpiamos los buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+			camera.Inputs(GL_MANAGER.window); 
+			camera.Update(); 
+
+			troll.Awake();
 			//Renderizo objeto 0
+			models[0].Render();
+
+			troll_2.Awake();
+			models[0].Render();
+
+
+			troll_3.Awake();
 			models[0].Render();
 
 			//Cambiamos buffers

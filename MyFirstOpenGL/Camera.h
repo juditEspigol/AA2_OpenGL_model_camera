@@ -11,10 +11,21 @@ public:
 	float near;
 	float far;
 
-	Camera(glm::vec3 _position, float _fov, float _near, float _far)
-		: GameObject(_position, glm::vec3(0.f), glm::vec3(1.0f)), fov(_fov), near(_near), far(_far),
+	Camera(GLuint _program, glm::vec3 _position, float _fov, float _near, float _far)
+		: GameObject(_program, _position, glm::vec3(0.f), glm::vec3(1.0f)), fov(_fov), near(_near), far(_far),
 		localVectorUp(glm::vec3(0.f, 1.f, 0.f))
 	{ }; 
+
+	void Update()
+	{
+		//Genero la matriz vista
+		glm::mat4 view = glm::lookAt(position, position + glm::vec3(0.f, 0.f, -1.f), localVectorUp);
+		// Definir la matriz proyeccion
+		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, near, far);
+
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	}
 
 	void Inputs(GLFWwindow* _window)
 	{

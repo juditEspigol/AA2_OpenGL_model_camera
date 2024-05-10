@@ -23,3 +23,6 @@ public:
 	GLuint LoadGeometryShader(const std::string& _filePath);
 	GLuint LoadVertexShader(const std::string& _filePath);
 };
+
+//Función que dado un struct que contiene los shaders de un programa generara el programa entero de la GPU
+GLuint CreateProgram(const ShaderProgram& shaders); 
