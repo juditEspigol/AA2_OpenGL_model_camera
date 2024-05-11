@@ -1,6 +1,15 @@
 #pragma once
 #include <glm.hpp>
 #include <vector>
+#include <GL/glew.h>
+#include <gtc/type_ptr.hpp>
+
+#include "GLManager.h"
+#include "ModelManager.h"
+
+#include "MatrixUtilities.h"
+#include "Model.h"
+#include <stb_image.h>
 
 class GameObject
 {
@@ -14,32 +23,24 @@ public:
 
 	std::vector<float> color; 
 
-	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color = {1.f, 1.f, 1.f, 1.f,})
-		: program(_program), position(_position), rotation(_rotation), scale(_scale), color(_color)
-	{}; 
+	Model model;
 
-	void Awake()
+	int width, height, nrChannels;
+	unsigned char* textureInfo;
+
+	GLuint textureMode;
+
+	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color = { 1.f, 1.f, 1.f, 1.f, },
+		Model _model = MODEL_MANAGER.models[0], const char* _texture = "Assets/Textures/Troll.png", GLuint _textureMode = GL_TEXTURE0)
+		: program(_program), position(_position), rotation(_rotation), scale(_scale), color(_color), model(_model), textureMode(_textureMode)
 	{
-		//Indicar a la tarjeta GPU que programa debe usar
-		glUseProgram(program);
+		textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
+		InitTexture();
+	}; 
 
-		//Definir la matriz de traslacion, rotacion y escalado
-		glm::mat4 translationMatrix = MatrixUtilities::GenerateTranslationMatrix(position);
-		glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(rotation, rotation.y);
-		glm::mat4 scaleMatrix = MatrixUtilities::GenerateScaleMatrix(scale);
+	void InitTexture();
 
-		//Asignar valores iniciales al programa
-		glUniform2f(glGetUniformLocation(program, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+	void Awake();
 
-		//Asignar valor variable de textura a usar.
-		glUniform1i(glGetUniformLocation(program, "textureSampler"), 0);
-
-		// Pasar las matrices
-		glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(rotationMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(program, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMatrix));
-
-		// Pasar el color en que queremos pintar el game object
-		glUniform4f(glGetUniformLocation(program, "ambientColor"), color[0], color[1], color[2], color[3]);
-	}
+	void Render();
 };
