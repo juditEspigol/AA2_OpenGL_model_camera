@@ -42,7 +42,7 @@ public:
 
 	void InitTexture();
 
-	void Awake();
+	virtual void Awake();
 
-	void Render();
+	virtual void Render();
 };

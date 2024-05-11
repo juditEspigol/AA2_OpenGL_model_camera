@@ -33,6 +33,7 @@
     <None Include="MyFirstFragmentShader.glsl" />
     <None Include="MyFirstGeometryShader.glsl" />
     <None Include="MyFirstVertexShader.glsl" />
+    <None Include="PrimitiveFragmentShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="MatrixUtilities.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="ProgramManager.h" />
     <ClInclude Include="ShaderProgram.h" />
   </ItemGroup>
