@@ -14,15 +14,19 @@ void GameObjectManager::CreateFigures()
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
 		glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.5f), { 0.5f, 1.f, 0.5f, 1.f }, MODEL_MANAGER.models[0], 
-		"Assets/Textures/Troll.png", GL_TEXTURE0));
+		"Assets/Textures/Troll.png", GL_TEXTURE0, 0));
 	
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
 		glm::vec3(-0.5f, 0.f, 0.5f), glm::vec3(0.f, 45.f, 0.f), glm::vec3(0.25f), { 1.f, 0.5f, 0.5f, 1.f }, MODEL_MANAGER.models[0],
-		"Assets/Textures/Troll.png", GL_TEXTURE0));
+		"Assets/Textures/Troll.png", GL_TEXTURE0, 0));
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
 		glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 300.f, 0.f), glm::vec3(0.25f), { 0.5f, 0.5f, 1.f, 1.f }, MODEL_MANAGER.models[0],
-		"Assets/Textures/Troll.png", GL_TEXTURE0));
+		"Assets/Textures/Troll.png", GL_TEXTURE0, 0));
+
+	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
+		glm::vec3(0.0f, 0.f, 0.0f), glm::vec3(0.f, 10.f, 0.f), glm::vec3(0.25f), { 1.f, 1.f, 1.f, 1.f }, MODEL_MANAGER.models[1],
+		"Assets/Textures/Rock.png", GL_TEXTURE1, 1));
 
 }
 

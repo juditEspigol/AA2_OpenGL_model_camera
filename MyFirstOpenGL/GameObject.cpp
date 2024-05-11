@@ -42,7 +42,7 @@ void GameObject::Awake()
 	glUniform2f(glGetUniformLocation(program, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	//Asignar valor variable de textura a usar.
-	glUniform1i(glGetUniformLocation(program, "textureSampler"), 0);
+	glUniform1i(glGetUniformLocation(program, "textureSampler"), textureIndex);
 
 	// Pasar las matrices
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));

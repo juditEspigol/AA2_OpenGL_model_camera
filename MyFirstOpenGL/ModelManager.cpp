@@ -3,6 +3,7 @@
 ModelManager::ModelManager()
 {
 	models.push_back(LoadOBJModel("Assets/Models/Troll.obj"));
+	models.push_back(LoadOBJModel("Assets/Models/Rock.obj"));
 }
 
 Model ModelManager::LoadOBJModel(const std::string& filePath)
