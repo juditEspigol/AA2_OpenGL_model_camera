@@ -28,26 +28,32 @@ void GameObject::InitTexture()
 	stbi_image_free(textureInfo);
 }
 
-void GameObject::Awake()
+void GameObject::Update()
 {
 	//Indicar a la tarjeta GPU que programa debe usar
 	glUseProgram(program);
 
 	//Definir la matriz de traslacion, rotacion y escalado
 	glm::mat4 translationMatrix = MatrixUtilities::GenerateTranslationMatrix(position);
-	glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(rotation, rotation.y);
+	glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(rotation, rotation.x);
+	rotationMatrix *= MatrixUtilities::GenerateRotationMatrix(rotation, rotation.y);
+	rotationMatrix *= MatrixUtilities::GenerateRotationMatrix(rotation, rotation.z);
 	glm::mat4 scaleMatrix = MatrixUtilities::GenerateScaleMatrix(scale);
 
 	//Asignar valores iniciales al programa
 	glUniform2f(glGetUniformLocation(program, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	//Asignar valor variable de textura a usar.
-	glUniform1i(glGetUniformLocation(program, "textureSampler"), textureIndex);
+	if (hasTexture)
+	{
+		//Asignar valor variable de textura a usar.
+		glUniform1i(glGetUniformLocation(program, "textureSampler"), textureIndex);
+	}
 
 	// Pasar las matrices
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(rotationMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(program, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMatrix));
+	glUniform1i(glGetUniformLocation(program, "hasTexture"), hasTexture);
 
 	// Pasar el color en que queremos pintar el game object
 	glUniform4f(glGetUniformLocation(program, "ambientColor"), color[0], color[1], color[2], color[3]);
@@ -59,7 +65,7 @@ void GameObject::Render()
 	glBindVertexArray(model.GetVAO());
 
 	// Dibujamos
-	glDrawArrays(GL_TRIANGLES, 0, model.GetNumVertex());
+	glDrawArrays(renderMode, 0, model.GetNumVertex());
 
 	//Desvinculamos VAO
 	glBindVertexArray(0);

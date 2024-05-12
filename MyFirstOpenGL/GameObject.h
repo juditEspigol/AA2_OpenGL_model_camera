@@ -1,26 +1,12 @@
 #pragma once
-#include <glm.hpp>
-#include <vector>
-#include <GL/glew.h>
-#include <gtc/type_ptr.hpp>
+#include "Object.h"
 
-#include "GLManager.h"
 #include "ModelManager.h"
-
-#include "MatrixUtilities.h"
 #include "Model.h"
-#include <stb_image.h>
 
-class GameObject
+class GameObject : public Object
 {
-public:
-
-	GLuint program; 
-
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
-
+private:
 	std::vector<float> color; 
 
 	Model model;
@@ -29,20 +15,27 @@ public:
 	unsigned char* textureInfo;
 	int textureIndex;
 
-	GLuint textureMode;
+	GLuint textureMode, renderMode;
 
-	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color = { 1.f, 1.f, 1.f, 1.f, },
-		Model _model = MODEL_MANAGER.models[0], const char* _texture = "Assets/Textures/Troll.png", GLuint _textureMode = GL_TEXTURE0, int _textureIndex = 0)
-		: program(_program), position(_position), rotation(_rotation), scale(_scale), color(_color), model(_model), textureMode(_textureMode), 
-		textureIndex(_textureIndex)
+	bool hasTexture;
+
+public:
+	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+		Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, bool _hasTexture, GLuint _renderMode)
+		: Object(_program, _position, _rotation, _scale), color(_color), model(_model), textureMode(_textureMode),
+		textureIndex(_textureIndex), hasTexture(_hasTexture), renderMode(_renderMode)
 	{
-		textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
-		InitTexture();
+		if (hasTexture)
+		{
+			textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
+			InitTexture();		
+		}
+
 	}; 
 
 	void InitTexture();
 
-	virtual void Awake();
+	virtual void Update();
 
 	virtual void Render();
 };

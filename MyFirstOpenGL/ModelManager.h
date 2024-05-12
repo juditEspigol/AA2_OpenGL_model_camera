@@ -27,5 +27,6 @@ public:
 	std::vector<Model> models;
 
 	Model LoadOBJModel(const std::string& filePath);
+	Model LoadPrimitive(const std::vector<float>& vertexs);
 };
 

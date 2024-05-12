@@ -54,6 +54,9 @@
     <ClCompile Include="GameObjectManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MyFirstVertexShader.glsl">
@@ -98,6 +101,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Primitive.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

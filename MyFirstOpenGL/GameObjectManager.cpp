@@ -13,43 +13,42 @@ void GameObjectManager::CreateFigures()
 	camera.push_back(new Camera(PROGRAM_MANAGER.compiledPrograms[0], glm::vec3(0.f, 0.5f, 2.f), 45.0f, 0.1f, 10.f));
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
-		glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.5f), { 0.5f, 1.f, 0.5f, 1.f }, MODEL_MANAGER.models[0], 
-		"Assets/Textures/Troll.png", GL_TEXTURE0, 0));
+		glm::vec3(0.f, 0.25f, 0.8f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.15f), { 0.5f, 1.f, 0.5f, 1.f }, MODEL_MANAGER.models[0], 
+		"Assets/Textures/Troll.png", GL_TEXTURE0, 0, true, GL_TRIANGLES));
 	
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
-		glm::vec3(-0.5f, 0.f, 0.5f), glm::vec3(0.f, 45.f, 0.f), glm::vec3(0.25f), { 1.f, 0.5f, 0.5f, 1.f }, MODEL_MANAGER.models[0],
-		"Assets/Textures/Troll.png", GL_TEXTURE0, 0));
+		glm::vec3(-0.2f, 0.25f, 1.f), glm::vec3(0.f, 80., 0.f), glm::vec3(0.1f), { 1.f, 0.5f, 0.5f, 1.f }, MODEL_MANAGER.models[0],
+		"Assets/Textures/Troll.png", GL_TEXTURE0, 0, true, GL_TRIANGLES));
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
-		glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 300.f, 0.f), glm::vec3(0.25f), { 0.5f, 0.5f, 1.f, 1.f }, MODEL_MANAGER.models[0],
-		"Assets/Textures/Troll.png", GL_TEXTURE0, 0));
+		glm::vec3(0.2f, 0.25f, 1.f), glm::vec3(0.f, 260.f, 0.f), glm::vec3(0.1f), { 0.5f, 0.5f, 1.f, 1.f }, MODEL_MANAGER.models[0],
+		"Assets/Textures/Troll.png", GL_TEXTURE0, 0, true, GL_TRIANGLES));
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
-		glm::vec3(0.0f, 0.f, 0.0f), glm::vec3(0.f, 10.f, 0.f), glm::vec3(0.25f), { 1.f, 1.f, 1.f, 1.f }, MODEL_MANAGER.models[1],
-		"Assets/Textures/Rock.png", GL_TEXTURE1, 1));
+		glm::vec3(0.0f, 0.25f, 1.1f), glm::vec3(0.f, 0.f, 270.f), glm::vec3(0.05f), { 0.9f, 0.9f, 0.9f, 1.f }, MODEL_MANAGER.models[1],
+		"Assets/Textures/Rock.png", GL_TEXTURE1, 1, true, GL_TRIANGLES));
 
-}
+	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
+		glm::vec3(0.3f, 0.8f, 0.3f), glm::vec3(0.f, 0.f, 270.f), glm::vec3(0.15f), { 0.3f, 0.3f, 0.3f, 1.f }, MODEL_MANAGER.models[1],
+		"Assets/Textures/Rock.png", GL_TEXTURE1, 1, true, GL_TRIANGLES));
 
-void GameObjectManager::InitTexture()
-{
-	for (GameObject* gObj : gameObjects)
-	{
-		gObj->InitTexture();
-	}
+	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
+		glm::vec3(0.0f, -0.2f, 1.1f), glm::vec3(10.f, 0.f, 0.f), glm::vec3(2.f), { 1.f, 0.8f, 0.4f, 1.f }, MODEL_MANAGER.models[2],
+		"Assets/Textures/Rock.png", GL_TEXTURE1, 1, false, GL_TRIANGLE_STRIP));
 }
 
 void GameObjectManager::Update()
 {
 	for (GameObject* gObj : gameObjects)
 	{
-		gObj->Awake();
+		gObj->Update();
 		gObj->Render();
 	}
 
 	for (Camera* cam : camera)
 	{
-		cam->Inputs(GL_MANAGER.window);
 		cam->Update();
+		cam->Inputs(GL_MANAGER.window);
 	}
 
 }

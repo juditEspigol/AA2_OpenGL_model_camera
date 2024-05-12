@@ -4,6 +4,22 @@ ModelManager::ModelManager()
 {
 	models.push_back(LoadOBJModel("Assets/Models/Troll.obj"));
 	models.push_back(LoadOBJModel("Assets/Models/Rock.obj"));
+	models.push_back(LoadPrimitive({
+		-0.2f, +0.2f, -0.2f, // 3
+		+0.2f, +0.2f, -0.2f, // 2
+		-0.2f, -0.2f, -0.2f, // 6
+		+0.2f, -0.2f, -0.2f, // 7
+		+0.2f, -0.2f, +0.2f, // 4
+		+0.2f, +0.2f, -0.2f, // 2
+		+0.2f, +0.2f, +0.2f, // 0
+		-0.2f, +0.2f, -0.2f, // 3
+		-0.2f, +0.2f, +0.2f, // 1
+		-0.2f, -0.2f, -0.2f, // 6
+		-0.2f, -0.2f, +0.2f, // 5
+		+0.2f, -0.2f, +0.2f, // 4
+		-0.2f, +0.2f, +0.2f, // 1
+		+0.2f, +0.2f, +0.2f  // 0))
+		}));
 }
 
 Model ModelManager::LoadOBJModel(const std::string& filePath)
@@ -116,4 +132,9 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 		}
 	}
 	return Model(vertexs, textureCoordinates, vertexNormal);
+}
+
+Model ModelManager::LoadPrimitive(const std::vector<float>& vertexs)
+{
+	return Model(vertexs);
 }
