@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
 	Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode)
 	: Object(_program, _position, _rotation, _scale), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
 {
@@ -9,7 +9,7 @@ GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation
 	InitTexture();
 }
 
-GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
 	Model _model, GLuint _renderMode)
 	: Object(_program, _position, _rotation, _scale), color(_color), model(_model), renderMode(_renderMode) 
 {
@@ -72,7 +72,7 @@ void GameObject::Update()
 	glUniform1i(glGetUniformLocation(program, "hasTexture"), hasTexture);
 
 	// Pasar el color en que queremos pintar el game object
-	glUniform4f(glGetUniformLocation(program, "ambientColor"), color[0], color[1], color[2], color[3]);
+	glUniform4fv(glGetUniformLocation(program, "ambientColor"), 1, glm::value_ptr(color));
 }
 
 void GameObject::Render()

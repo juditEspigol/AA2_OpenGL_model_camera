@@ -7,7 +7,7 @@
 class GameObject : public Object
 {
 private:
-	std::vector<float> color; 
+	glm::vec4 color; 
 
 	Model model;
 
@@ -20,9 +20,9 @@ private:
 	bool hasTexture;
 
 public:
-	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
 		Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode);
-	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
 		Model _model, GLuint _renderMode);
 
 	void InitTexture();

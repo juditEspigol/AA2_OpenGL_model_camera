@@ -33,7 +33,7 @@ void GameObjectManager::CreateFigures()
 		"Assets/Textures/Rock.png", GL_TEXTURE1, 1, GL_TRIANGLES));
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
-		glm::vec3(0.0f, -0.2f, 1.1f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(2.f), { 1.f, 0.8f, 0.4f, 1.f }, MODEL_MANAGER.models[2], GL_TRIANGLE_STRIP));
+		glm::vec3(0.0f, -0.16f, 1.1f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(2.f), { 1.f, 0.8f, 0.4f, 1.f }, MODEL_MANAGER.models[2], GL_TRIANGLE_STRIP));
 }
 
 void GameObjectManager::Update()
