@@ -1,5 +1,21 @@
 #include "GameObject.h"
 
+GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+	Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode)
+	: Object(_program, _position, _rotation, _scale), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
+{
+	hasTexture = true;
+	textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
+	InitTexture();
+}
+
+GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+	Model _model, GLuint _renderMode)
+	: Object(_program, _position, _rotation, _scale), color(_color), model(_model), renderMode(_renderMode) 
+{
+	hasTexture = false;
+};
+
 void GameObject::InitTexture()
 {
 	//Definimos canal de textura activo

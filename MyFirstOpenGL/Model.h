@@ -14,7 +14,8 @@ private:
 
 public:
 
-    Model(const std::vector<float>& vertexs, const std::vector<float>& uvs = {0,0,0}, const std::vector<float>& normals = { 0,0,0 });
+    Model(const std::vector<float>& vertexs, const std::vector<float>& uvs, const std::vector<float>& normals);
+    Model(const std::vector<float>& vertexs);
 
     GLuint GetVAO()
     {

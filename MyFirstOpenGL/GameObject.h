@@ -21,17 +21,9 @@ private:
 
 public:
 	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
-		Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, bool _hasTexture, GLuint _renderMode)
-		: Object(_program, _position, _rotation, _scale), color(_color), model(_model), textureMode(_textureMode),
-		textureIndex(_textureIndex), hasTexture(_hasTexture), renderMode(_renderMode)
-	{
-		if (hasTexture)
-		{
-			textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
-			InitTexture();		
-		}
-
-	}; 
+		Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode);
+	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, std::vector<float> _color,
+		Model _model, GLuint _renderMode);
 
 	void InitTexture();
 
