@@ -15,8 +15,29 @@ private:
 public:
 
     Model(const std::vector<float>& vertexs, const std::vector<float>& uvs, const std::vector<float>& normals);
-    
-    void Render() const;
+    Model(const std::vector<float>& vertexs);
+
+    GLuint GetVAO()
+    {
+        return VAO;
+    }
+
+    GLuint GetVBO()
+    {
+        return VBO;
+    }
+
+    GLuint GetuvVAO()
+    {
+        return uvVBO;
+    }
+
+    unsigned int GetNumVertex()
+    {
+        return numVertexs;
+    }
+
+
 };
 
 #endif
