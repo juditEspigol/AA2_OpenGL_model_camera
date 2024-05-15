@@ -23,7 +23,7 @@ void main() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		
 		//Compilar shaders
-		PROGRAM_MANAGER.InitShader("MyFirstVertexShader.glsl", "MyFirstGeometryShader.glsl", "MyFirstFragmentShader.glsl");
+		PROGRAM_MANAGER.PushProgram("MyFirstVertexShader.glsl", "MyFirstGeometryShader.glsl", "MyFirstFragmentShader.glsl");
 
 		//Declarar instancia de GameObject	
 		GAMEOBJECT_MANAGER.CreateFigures();

@@ -12,7 +12,7 @@ public:
 	float far;
 
 	Camera(GLuint _program, glm::vec3 _position, float _fov, float _near, float _far)
-		: Object(_program, _position, glm::vec3(0.f), glm::vec3(1.0f)), fov(_fov), near(_near), far(_far),
+		: Object(_program, _position, glm::vec3(0.f, 90.0f, 0.0f), glm::vec3(1.0f)), fov(_fov), near(_near), far(_far),
 		localVectorUp(glm::vec3(0.f, 1.f, 0.f)){ }; 
 
 	void Update();

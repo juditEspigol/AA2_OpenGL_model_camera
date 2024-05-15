@@ -10,7 +10,7 @@ GameObjectManager::~GameObjectManager()
 
 void GameObjectManager::CreateFigures()
 {
-	camera.push_back(new Camera(PROGRAM_MANAGER.compiledPrograms[0], glm::vec3(0.f, 0.5f, 2.f), 45.0f, 0.1f, 10.f));
+	camera.push_back(new Camera(PROGRAM_MANAGER.compiledPrograms[0], glm::vec3(0.f, 1.f, 5.f), 45.0f, 0.1f, 10.f));
 
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
 		glm::vec3(0.f, 0.25f, 1.1f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.15f), { 0.5f, 1.f, 0.5f, 1.f }, MODEL_MANAGER.models[0], 

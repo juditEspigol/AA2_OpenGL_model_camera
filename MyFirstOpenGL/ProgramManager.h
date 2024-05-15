@@ -25,7 +25,7 @@ public:
 
 	std::vector<GLuint> compiledPrograms;
 
-	void InitShader(std::string vShader, std::string gShader, std::string fShader);
+	void PushProgram(std::string _vShader, std::string _gShader, std::string _fShader);
 
 	void DeleteAllPrograms();
 };
