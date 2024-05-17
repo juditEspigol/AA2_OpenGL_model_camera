@@ -12,16 +12,14 @@
 class Object
 {
 protected:
-
-	GLuint program;
 	
 	Transform transform; 
 	float scaleTime; // 0 < scaleTime < n 
 
 public:
 
-	Object(GLuint _program, Transform _transform, float _scaleTime = 1.f)
-		:program(_program), transform(_transform), scaleTime(_scaleTime)
+	Object(Transform _transform, float _scaleTime = 1.f)
+		:transform(_transform), scaleTime(_scaleTime)
 	{};
 
 	virtual void Update(float _dt) = 0;

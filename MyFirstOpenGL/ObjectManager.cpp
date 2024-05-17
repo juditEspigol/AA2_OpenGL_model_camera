@@ -11,7 +11,7 @@ ObjectManager::~ObjectManager()
 void ObjectManager::CreateObjects()
 {
 	// 1. Set Camera
-	camera = new Camera(PROGRAM_MANAGER.compiledPrograms[0], glm::vec3(0.f, 0.25f, 1.2f));
+	camera = new Camera(glm::vec3(0.f, 0.25f, 1.2f));
 
 	// 2. Set GaemObjects
 	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0], 
@@ -39,7 +39,7 @@ void ObjectManager::CreateObjects()
 		{ 0.3f, 0.3f, 0.3f, 1.f }, 
 		MODEL_MANAGER.models[1], "Assets/Textures/Rock.png", GL_TEXTURE1, 1, GL_TRIANGLES));
 
-	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[0],
+	gameObjects.push_back(new GameObject(PROGRAM_MANAGER.compiledPrograms[1],
 		Transform (glm::vec3(0.0f, -0.16f, 1.25f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(2.f)), 
 		{ 1.f, 0.8f, 0.4f, 1.f }, 
 		MODEL_MANAGER.models[2], GL_TRIANGLE_STRIP));

@@ -7,6 +7,8 @@ class GameObject : public Object
 {
 private:
 
+	GLuint program;
+
 	Model model;
 	glm::vec4 color; 
 

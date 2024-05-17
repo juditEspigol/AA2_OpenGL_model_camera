@@ -1,16 +1,18 @@
 #include "Camera.h"
+#include "ProgramManager.h"
 
-Camera::Camera(GLuint _program, glm::vec3 _centerOfView)
-	: Object(_program, Transform(glm::vec3(0.f, 1.f, 5.f), glm::vec3(0.f))),
+Camera::Camera(glm::vec3 _centerOfView)
+	: Object(Transform(glm::vec3(0.f, 1.f, 5.f), glm::vec3(0.f))),
 	fov(45.f), near(0.1f), far(10.f), distanceToCenter(1.5f), angleIncrease(glm::vec3(0.f, 1.f, 0.f)),
 	eyeOrientation(glm::vec3(0.f, 0.777f, 1.4f)), centerOfView(_centerOfView)
 {};
 
-Camera::Camera(GLuint _program, Transform _transform, float _fov, float _near, float _far,
+Camera::Camera(Transform _transform, float _fov, float _near, float _far,
 	glm::vec3 _centerOfView, float _distanceToCenter, glm::vec3 _eyeOrientation, glm::vec3 _angleIncrease)
-	: Object(_program, _transform), fov(_fov), near(_near), far(_far),
+	: Object(_transform), fov(_fov), near(_near), far(_far),
 	distanceToCenter(_distanceToCenter), angleIncrease(_angleIncrease),
-	eyeOrientation(_eyeOrientation), centerOfView(_centerOfView) { };
+	eyeOrientation(_eyeOrientation), centerOfView(_centerOfView) 
+{};
 
 
 void Camera::Update(float _dt)
@@ -41,8 +43,13 @@ void Camera::Update(float _dt)
 	glm::mat4 view = glm::lookAt(transform.position, centerOfView, transform.up);
 	glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, near, far);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	//Indicar a la tarjeta GPU que programa debe usar
+	for (GLuint program : PROGRAM_MANAGER.compiledPrograms)
+	{
+		glUseProgram(program);
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	}
 }
 
 void Camera::Inputs(GLFWwindow* _window)
@@ -91,7 +98,6 @@ void Camera::Inputs(GLFWwindow* _window)
 		eyeOrientation = glm::vec3(0.f, 0.777f, 1.4f); 
 		distanceToCenter = 1.5f;
 		scaleTime = 1.f; 
-
 	}
 	if (glfwGetKey(_window, GLFW_KEY_1) == GLFW_PRESS) {
 		typeOfView = 1;
@@ -110,5 +116,11 @@ void Camera::Inputs(GLFWwindow* _window)
 		transform.position = glm::vec3(0.f, 0.5f, 2.f);
 		transform.rotation = glm::vec3(0.f);
 		centerOfView = glm::vec3(0.2f, 0.25f, 1.3f) + glm::vec3(0.f, 0.f, -1.f);
+	}
+	if (glfwGetKey(_window, GLFW_KEY_3) == GLFW_PRESS) {
+		scaleTime = 0.f; 
+	}
+	if (glfwGetKey(_window, GLFW_KEY_4) == GLFW_PRESS) {
+		scaleTime = 1.f;
 	}
 }

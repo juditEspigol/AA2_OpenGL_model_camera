@@ -2,7 +2,7 @@
 
 GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
 	Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode)
-	: Object(_program, _transform), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
+	: Object(_transform), program(_program), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
 {
 	hasTexture = true;
 
@@ -12,7 +12,7 @@ GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
 
 GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
 	Model _model, GLuint _renderMode)
-	: Object(_program, _transform), color(_color), model(_model), renderMode(_renderMode)
+	: Object(_transform), program(_program), color(_color), model(_model), renderMode(_renderMode)
 {
 	hasTexture = false;
 };
@@ -70,7 +70,6 @@ void GameObject::Update(float _dt)
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(translationMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(rotationMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(program, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMatrix));
-	glUniform1i(glGetUniformLocation(program, "hasTexture"), hasTexture);
 
 	// Pasar el color en que queremos pintar el game object
 	glUniform4fv(glGetUniformLocation(program, "ambientColor"), 1, glm::value_ptr(color));
