@@ -1,17 +1,18 @@
 #include "GameObject.h"
 
-GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
+GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
 	Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode)
-	: Object(_program, _position, _rotation, _scale), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
+	: Object(_program, _transform), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
 {
 	hasTexture = true;
+
 	textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
 	InitTexture();
-}
+};
 
-GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
+GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
 	Model _model, GLuint _renderMode)
-	: Object(_program, _position, _rotation, _scale), color(_color), model(_model), renderMode(_renderMode) 
+	: Object(_program, _transform), color(_color), model(_model), renderMode(_renderMode)
 {
 	hasTexture = false;
 };
@@ -44,17 +45,17 @@ void GameObject::InitTexture()
 	stbi_image_free(textureInfo);
 }
 
-void GameObject::Update()
+void GameObject::Update(float _dt)
 {
 	//Indicar a la tarjeta GPU que programa debe usar
 	glUseProgram(program);
 
 	//Definir la matriz de traslacion, rotacion y escalado
-	glm::mat4 translationMatrix = MatrixUtilities::GenerateTranslationMatrix(position);
-	glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(rotation, rotation.x);
-	rotationMatrix *= MatrixUtilities::GenerateRotationMatrix(rotation, rotation.y);
-	rotationMatrix *= MatrixUtilities::GenerateRotationMatrix(rotation, rotation.z);
-	glm::mat4 scaleMatrix = MatrixUtilities::GenerateScaleMatrix(scale);
+	glm::mat4 translationMatrix = MatrixUtilities::GenerateTranslationMatrix(transform.position);
+	glm::mat4 rotationMatrix = MatrixUtilities::GenerateRotationMatrix(transform.rotation, transform.rotation.x);
+	rotationMatrix *= MatrixUtilities::GenerateRotationMatrix(transform.rotation, transform.rotation.y);
+	rotationMatrix *= MatrixUtilities::GenerateRotationMatrix(transform.rotation, transform.rotation.z);
+	glm::mat4 scaleMatrix = MatrixUtilities::GenerateScaleMatrix(transform.scale);
 
 	//Asignar valores iniciales al programa
 	glUniform2f(glGetUniformLocation(program, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -81,7 +82,7 @@ void GameObject::Render()
 	glBindVertexArray(model.GetVAO());
 
 	// Dibujamos
-	glDrawArrays(renderMode, 0, model.GetNumVertex());
+	glDrawArrays(renderMode, 0, model.GetNumVertexs());
 
 	//Desvinculamos VAO
 	glBindVertexArray(0);

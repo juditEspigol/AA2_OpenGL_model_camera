@@ -4,6 +4,7 @@
 #include <fstream>
 #include <glm.hpp>
 #include <iostream>
+
 #include "Model.h"
 
 #define MODEL_MANAGER ModelManager::Instance()
@@ -26,7 +27,7 @@ public:
 
 	std::vector<Model> models;
 
-	Model LoadOBJModel(const std::string& filePath);
-	Model LoadPrimitive(const std::vector<float>& vertexs);
+	Model LoadOBJModel(const std::string& _filePath);
+	Model LoadPrimitive(const std::vector<float>& _vertexs);
 };
 

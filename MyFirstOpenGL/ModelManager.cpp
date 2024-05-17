@@ -3,8 +3,11 @@
 ModelManager::ModelManager()
 {
 	models.push_back(LoadOBJModel("Assets/Models/Troll.obj"));
+
 	models.push_back(LoadOBJModel("Assets/Models/Rock.obj"));
-	models.push_back(LoadPrimitive({
+
+	models.push_back(LoadPrimitive(
+		{
 		-0.2f, +0.2f, -0.2f, // 3
 		+0.2f, +0.2f, -0.2f, // 2
 		-0.2f, -0.2f, -0.2f, // 6
@@ -18,17 +21,18 @@ ModelManager::ModelManager()
 		-0.2f, -0.2f, +0.2f, // 5
 		+0.2f, -0.2f, +0.2f, // 4
 		-0.2f, +0.2f, +0.2f, // 1
-		+0.2f, +0.2f, +0.2f  // 0))
-		}));
+		+0.2f, +0.2f, +0.2f  // 0
+		})
+	);
 }
 
-Model ModelManager::LoadOBJModel(const std::string& filePath)
+Model ModelManager::LoadOBJModel(const std::string& _filePath)
 {
 	//Verifico archivo y si no puedo abrirlo cierro aplicativo
-	std::ifstream file(filePath);
+	std::ifstream file(_filePath);
 
 	if (!file.is_open()) {
-		std::cerr << "No se ha podido abrir el archivo: " << filePath << std::endl;
+		std::cerr << "No se ha podido abrir el archivo: " << _filePath << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 
@@ -134,7 +138,7 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 	return Model(vertexs, textureCoordinates, vertexNormal);
 }
 
-Model ModelManager::LoadPrimitive(const std::vector<float>& vertexs)
+Model ModelManager::LoadPrimitive(const std::vector<float>& _vertexs)
 {
-	return Model(vertexs);
+	return Model(_vertexs);
 }

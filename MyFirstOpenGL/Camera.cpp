@@ -1,14 +1,44 @@
 #include "Camera.h"
 
-void Camera::Update()
-{
-	float camX =  1.5 * -sinf(rotation.x * (3.141516 / 180)) * cosf((rotation.y) * (3.141516 / 180));
-	float camY =  1.5 * -sinf((rotation.y) * (3.141516 / 180));
-	float camZ = -1.5 * cosf((rotation.x) * (3.141516 / 180)) * cosf((rotation.y) * (3.141516 / 180));
+Camera::Camera(GLuint _program, glm::vec3 _centerOfView)
+	: Object(_program, Transform(glm::vec3(0.f, 1.f, 5.f), glm::vec3(0.f))),
+	fov(45.f), near(0.1f), far(10.f), distanceToCenter(1.5f), angleIncrease(glm::vec3(0.f, 1.f, 0.f)),
+	eyeOrientation(glm::vec3(0.f, 0.777f, 1.4f)), centerOfView(_centerOfView)
+{};
 
-	//Genero la matriz vista
-	glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.777f, 1.4f) + glm::vec3(camY, camX, camZ), glm::vec3(0.0f, 0.25f, 1.2f), localVectorUp);
-	// Definir la matriz proyeccion
+Camera::Camera(GLuint _program, Transform _transform, float _fov, float _near, float _far,
+	glm::vec3 _centerOfView, float _distanceToCenter, glm::vec3 _eyeOrientation, glm::vec3 _angleIncrease)
+	: Object(_program, _transform), fov(_fov), near(_near), far(_far),
+	distanceToCenter(_distanceToCenter), angleIncrease(_angleIncrease),
+	eyeOrientation(_eyeOrientation), centerOfView(_centerOfView) { };
+
+
+void Camera::Update(float _dt)
+{
+	if (typeOfView == 0)
+	{
+		// Convert the spherical coordinates to cartesian coordinates using the standard formula
+		transform.position =
+		{
+			eyeOrientation.x + distanceToCenter * sin(transform.rotation.y * (M_PI / 180)) * cos(transform.rotation.z * (M_PI / 180)),
+			eyeOrientation.y + distanceToCenter * sin(transform.rotation.z * (M_PI / 180)),
+			eyeOrientation.z + distanceToCenter * cos(transform.rotation.y * (M_PI / 180)) * cos(transform.rotation.z * (M_PI / 180))
+		};
+
+		transform.rotation += angleIncrease * scaleTime;
+	}
+	else if (typeOfView == 1)
+	{
+		transform.position =
+		{
+			eyeOrientation.x + distanceToCenter * sin(transform.rotation.y * (M_PI / 180)) * cos(transform.rotation.z * (M_PI / 180)),
+			eyeOrientation.y + distanceToCenter * sin(transform.rotation.z * (M_PI / 180)),
+			eyeOrientation.z + distanceToCenter * cos(transform.rotation.y * (M_PI / 180)) * cos(transform.rotation.z * (M_PI / 180))
+		};
+	}
+
+	// Matrix generation
+	glm::mat4 view = glm::lookAt(transform.position, centerOfView, transform.up);
 	glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, near, far);
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -18,26 +48,26 @@ void Camera::Update()
 void Camera::Inputs(GLFWwindow* _window)
 {
 	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
-		position.y += 0.01f;
+		transform.position.y += 0.01f;
 	}
 	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
-		position.y -= 0.01f;
+		transform.position.y -= 0.01f;
 	}
 
 	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
-		position.x += 0.01f;
-		rotation.y += 1.0f; 
+		transform.position.x += 0.01f;
+		transform.rotation.y += 1.0f;
 	}
 	if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
-		position.x -= 0.01f;
-		rotation.y -= 1.f; 
+		transform.position.x -= 0.01f;
+		transform.rotation.y -= 1.f;
 	}
 
 	if (glfwGetKey(_window, GLFW_KEY_P) == GLFW_PRESS) {
-		position.z += 0.01f;
+		transform.position.z += 0.01f;
 	}
 	if (glfwGetKey(_window, GLFW_KEY_O) == GLFW_PRESS) {
-		position.z -= 0.01f;
+		transform.position.z -= 0.01f;
 	}
 
 	if (glfwGetKey(_window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
@@ -49,5 +79,36 @@ void Camera::Inputs(GLFWwindow* _window)
 		fov -= 1.f;
 		if (fov < 1.f)
 			fov = 1.f;
+	}
+
+	if (glfwGetKey(_window, GLFW_KEY_0) == GLFW_PRESS) {
+		typeOfView = 0;
+
+		// RESET TRANSFORM
+		transform.position = glm::vec3(0.f, 1.f, 5.f); 
+		transform.rotation = glm::vec3(0.f); 
+		centerOfView = glm::vec3(0.f, 0.25f, 1.2f);
+		eyeOrientation = glm::vec3(0.f, 0.777f, 1.4f); 
+		distanceToCenter = 1.5f;
+		scaleTime = 1.f; 
+
+	}
+	if (glfwGetKey(_window, GLFW_KEY_1) == GLFW_PRESS) {
+		typeOfView = 1;
+
+		// RESET TRANSFORM
+		transform.position = glm::vec3(0.f, 0.5f, 2.f);
+		transform.rotation = glm::vec3(0.f, 120.f, 0.f);
+		eyeOrientation = transform.position; 
+		distanceToCenter = 0.25f;
+		centerOfView = glm::vec3(-0.2f, 0.25f, 1.3f);
+	}
+	if (glfwGetKey(_window, GLFW_KEY_2) == GLFW_PRESS) {
+		typeOfView = 2;
+
+		// RESET TRANSFORM
+		transform.position = glm::vec3(0.f, 0.5f, 2.f);
+		transform.rotation = glm::vec3(0.f);
+		centerOfView = glm::vec3(0.2f, 0.25f, 1.3f) + glm::vec3(0.f, 0.f, -1.f);
 	}
 }
