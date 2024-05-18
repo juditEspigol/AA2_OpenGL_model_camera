@@ -31,7 +31,4 @@ public:
 
 };
 
-Model LoadOBJModel(const std::string& _filePath);
-Model LoadPrimitive(const std::vector<float>& _vertexs);
-
 #endif

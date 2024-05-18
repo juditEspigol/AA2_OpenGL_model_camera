@@ -1,17 +1,17 @@
 #include "Camera.h"
-#include "ProgramManager.h"
 
-Camera::Camera(glm::vec3 _centerOfView)
-	: Object(Transform(glm::vec3(0.f, 1.f, 5.f), glm::vec3(0.f))),
-	fov(45.f), near(0.1f), far(10.f), distanceToCenter(1.25f), angleIncrease(glm::vec3(0.f, 1.f, 0.f)),
-	eyeOrientation(glm::vec3(0.f, 0.75f, 1.2f)), centerOfView(_centerOfView), typeOfView(TypeOfView::ORBIT)
-{};
+Camera::Camera()
+	: Object(Transform(glm::vec3(0.f), glm::vec3(0.f))),
+	fov(45.f), near(0.1f), far(10.f), angleIncrease(glm::vec3(0.f, 1.f, 0.f)), typeOfView(TypeOfView::ORBIT)
+{
+	ResetTypeOfView(typeOfView); 
+};
 
 Camera::Camera(Transform _transform, float _fov, float _near, float _far,
 	glm::vec3 _centerOfView, float _distanceToCenter, glm::vec3 _eyeOrientation, glm::vec3 _angleIncrease)
 	: Object(_transform), fov(_fov), near(_near), far(_far),
 	distanceToCenter(_distanceToCenter), angleIncrease(_angleIncrease),
-	eyeOrientation(_eyeOrientation), centerOfView(_centerOfView) , typeOfView(TypeOfView::ORBIT)
+	eyeOrientation(_eyeOrientation), centerOfView(_centerOfView), typeOfView(TypeOfView::ORBIT)
 {};
 
 
@@ -91,7 +91,7 @@ void Camera::ResetTypeOfView(TypeOfView _typeOfView)
 		centerOfView = glm::vec3(0.2f, 0.25f, 1.3f) + glm::vec3(0.f, 0.19f, 0.f);
 		eyeOrientation = centerOfView;
 		distanceToCenter = 0.4f;
-		fov = 20.f;
+		fov = 10.f;
 
 		break;
 	case Camera::TypeOfView::DOLLY_ZOOM:

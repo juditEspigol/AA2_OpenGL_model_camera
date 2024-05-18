@@ -3,7 +3,6 @@
 ModelManager::ModelManager()
 {
 	models.push_back(LoadOBJModel("Assets/Models/Troll.obj"));
-
 	models.push_back(LoadOBJModel("Assets/Models/Rock.obj"));
 
 	models.push_back(LoadPrimitive(

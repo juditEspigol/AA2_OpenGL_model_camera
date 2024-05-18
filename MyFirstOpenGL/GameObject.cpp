@@ -5,11 +5,6 @@ GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
 	: Object(_transform), program(_program), color(_color), model(_model), texture(_texture), renderMode(_renderMode)
 {};
 
-GameObject::~GameObject()
-{
-	delete texture;
-};
-
 
 void GameObject::Update(float _dt)
 {

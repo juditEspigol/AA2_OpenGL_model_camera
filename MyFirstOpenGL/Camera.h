@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include "ProgramManager.h"
 
 class Camera : public Object
 {
@@ -28,7 +29,7 @@ private:
 
 public:
 
-	Camera(glm::vec3 _centerOfView = glm::vec3(0.f));
+	Camera();
 
 	Camera(Transform _transform, float _fov, float _near, float _far,
 		glm::vec3 _centerOfView, float _distanceToCenter, glm::vec3 _eyeOrientation, glm::vec3 _angleIncrease);

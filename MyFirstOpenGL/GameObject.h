@@ -20,7 +20,7 @@ public:
 	GameObject(GLuint _program, 
 		Transform _transform, glm::vec4 _color,
 		Model _model, Texture* texture, GLuint _renderMode);
-	~GameObject(); 
+
  
 	virtual void Update(float _dt) override; 
 	virtual void Render();
