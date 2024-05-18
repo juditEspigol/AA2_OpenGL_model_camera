@@ -5,7 +5,14 @@ class Camera : public Object
 {
 private:
 
-	int typeOfView = 0; 
+	enum class TypeOfView
+	{
+		ORBIT = 0, 
+		PLANE_TROLL_1 = 1,
+		PLANE_TROLL_3 = 2,
+		DOLLY_ZOOM = 3
+	};
+	TypeOfView typeOfView; 
 
 	float fov;
 	float near;
@@ -15,6 +22,9 @@ private:
 	float distanceToCenter; 
 	glm::vec3 eyeOrientation; 
 	glm::vec3 angleIncrease; 
+
+	void ResetTypeOfView(TypeOfView _typeOfView);
+	void CalculTypeOfView(); 
 
 public:
 
@@ -26,6 +36,4 @@ public:
 	virtual void Update(float _dt) override;
 
 	void Inputs(GLFWwindow* _window);
-
-	inline void RelocateCenterOfView(const glm::vec3 _centerOfView) { centerOfView = _centerOfView; }; 
 };
