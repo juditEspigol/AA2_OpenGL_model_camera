@@ -1,8 +1,11 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <glm.hpp>
 #include <GL/glew.h>
 #include <vector>
+#include <sstream>
+#include <fstream>
 #include <iostream>
 
 class Model 
@@ -25,6 +28,10 @@ public:
     inline GLuint GetVBO() const { return VBO; }; 
     inline GLuint GetUvVBO() const { return uvVBO; }; 
     inline unsigned int GetNumVertexs() const { return numVertexs; }; 
+
 };
+
+Model LoadOBJModel(const std::string& _filePath);
+Model LoadPrimitive(const std::vector<float>& _vertexs);
 
 #endif

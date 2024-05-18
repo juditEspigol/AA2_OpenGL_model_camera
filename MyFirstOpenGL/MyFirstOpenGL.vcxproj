@@ -47,6 +47,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ProgramManager.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

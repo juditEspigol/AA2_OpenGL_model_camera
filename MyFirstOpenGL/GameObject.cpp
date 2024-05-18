@@ -1,49 +1,15 @@
 #include "GameObject.h"
 
 GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
-	Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode)
-	: Object(_transform), program(_program), color(_color), model(_model), textureMode(_textureMode), textureIndex(_textureIndex), renderMode(_renderMode)
-{
-	hasTexture = true;
+	Model _model, Texture* _texture, GLuint _renderMode)
+	: Object(_transform), program(_program), color(_color), model(_model), texture(_texture), renderMode(_renderMode)
+{};
 
-	textureInfo = stbi_load(_texture, &width, &height, &nrChannels, 0);
-	InitTexture();
+GameObject::~GameObject()
+{
+	delete texture;
 };
 
-GameObject::GameObject(GLuint _program, Transform _transform, glm::vec4 _color,
-	Model _model, GLuint _renderMode)
-	: Object(_transform), program(_program), color(_color), model(_model), renderMode(_renderMode)
-{
-	hasTexture = false;
-};
-
-void GameObject::InitTexture()
-{
-	//Definimos canal de textura activo
-	GLuint textureID;
-	glActiveTexture(textureMode);
-
-	//Generar textura
-	glGenTextures(1, &textureID);
-
-	//Vinculamos texture
-	glBindTexture(GL_TEXTURE_2D, textureID);
-
-	//Configurar textura
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//Cargar imagen a la textura
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureInfo);
-
-	//Generar mipmap
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	//Liberar memoria de la imagen cargada
-	stbi_image_free(textureInfo);
-}
 
 void GameObject::Update(float _dt)
 {
@@ -60,10 +26,10 @@ void GameObject::Update(float _dt)
 	//Asignar valores iniciales al programa
 	glUniform2f(glGetUniformLocation(program, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	if (hasTexture)
+	if (texture != nullptr)
 	{
 		//Asignar valor variable de textura a usar.
-		glUniform1i(glGetUniformLocation(program, "textureSampler"), textureIndex);
+		glUniform1i(glGetUniformLocation(program, "textureSampler"), texture->textureIndex);
 	}
 
 	// Pasar las matrices
