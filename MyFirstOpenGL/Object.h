@@ -3,24 +3,27 @@
 #include <vector>
 #include <GL/glew.h>
 #include <gtc/type_ptr.hpp>
+#include <stb_image.h>
 
 #include "GLManager.h"
-
+#include "Transform.h"
 #include "MatrixUtilities.h"
-#include <stb_image.h>
 
 class Object
 {
+protected:
+	
+	Transform transform; 
+	float scaleTime; // 0 < scaleTime < n 
+
 public:
-	GLuint program;
 
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+	Object(Transform _transform, float _scaleTime = 1.f)
+		:transform(_transform), scaleTime(_scaleTime)
+	{};
 
-	Object(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale)
-		:program(_program), position(_position), rotation(_rotation), scale(_scale) {};
-
-	virtual void Update() = 0;
+	virtual void Update(float _dt) = 0;
+	
+	inline void StopMovement() { scaleTime = 0.f; }; 
 };
 

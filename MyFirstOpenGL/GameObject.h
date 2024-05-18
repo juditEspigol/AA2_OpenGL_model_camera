@@ -1,33 +1,27 @@
 #pragma once
 #include "Object.h"
-
-#include "ModelManager.h"
+#include "Texture.h"
 #include "Model.h"
 
 class GameObject : public Object
 {
 private:
-	glm::vec4 color; 
+
+	GLuint program;
 
 	Model model;
+	glm::vec4 color; 
 
-	int width, height, nrChannels;
-	unsigned char* textureInfo;
-	int textureIndex;
-
-	GLuint textureMode, renderMode;
-
-	bool hasTexture;
+	GLuint renderMode;
+	Texture* texture;
 
 public:
-	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
-		Model _model, const char* _texture, GLuint _textureMode, int _textureIndex, GLuint _renderMode);
-	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color,
-		Model _model, GLuint _renderMode);
 
-	void InitTexture();
+	GameObject(GLuint _program, 
+		Transform _transform, glm::vec4 _color,
+		Model _model, Texture* texture, GLuint _renderMode);
 
-	virtual void Update();
-
+ 
+	virtual void Update(float _dt) override; 
 	virtual void Render();
 };

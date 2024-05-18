@@ -1,8 +1,8 @@
 #include "ProgramManager.h"
 
-void ProgramManager::InitShader(std::string vShader, std::string gShader, std::string fShader)
+void ProgramManager::PushProgram(std::string _vShader, std::string _gShader, std::string _fShader)
 {
-	ShaderProgram program = ShaderProgram(vShader, gShader, fShader);
+	ShaderProgram program = ShaderProgram(_vShader, _gShader, _fShader);
 	compiledPrograms.push_back(CreateProgram(program));
 }
 
