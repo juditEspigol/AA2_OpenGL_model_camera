@@ -1,6 +1,9 @@
 #pragma once
 #include <GL/glew.h>
 #include <vector>
+#include <string>
+
+#include "ShaderProgram.h"
 
 #define PROGRAM_MANAGER ProgramManager::Instance()
 
@@ -22,9 +25,6 @@ public:
 
 	std::vector<GLuint> compiledPrograms;
 
-	inline void DeleteAllPrograms()
-	{
-		for (int i = 0; i < compiledPrograms.size(); i++)
-			glDeleteProgram(compiledPrograms[i]);
-	}
+	void PushProgram(std::string _vShader, std::string _gShader, std::string _fShader);
+	void DeleteAllPrograms();
 };

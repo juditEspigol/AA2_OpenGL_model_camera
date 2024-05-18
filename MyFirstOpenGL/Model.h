@@ -1,8 +1,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <vector>
+#include <glm.hpp>
 #include <GL/glew.h>
+#include <vector>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
 class Model 
 {
@@ -13,10 +17,18 @@ private:
     unsigned int numVertexs;
 
 public:
+  
+    // Constructor for game objects with texture
+    Model(const std::vector<float>& _vertexs, const std::vector<float>& _uvs, const std::vector<float>& _normals);
+    // Constructor for primitives
+    Model(const std::vector<float>& _vertexs);
 
-    Model(const std::vector<float>& vertexs, const std::vector<float>& uvs, const std::vector<float>& normals);
-    
-    void Render() const;
+    // GETTERS 
+    inline GLuint GetVAO() const { return VAO; }; 
+    inline GLuint GetVBO() const { return VBO; }; 
+    inline GLuint GetUvVBO() const { return uvVBO; }; 
+    inline unsigned int GetNumVertexs() const { return numVertexs; }; 
+
 };
 
 #endif
